@@ -91,22 +91,22 @@ closeStroke.Thickness = isMobile and 0.5 or 1
 closeStroke.Parent = closeButton
 print("CloseButton created")
 
-local infiniteYieldButton = Instance.new("TextButton")
-infiniteYieldButton.Size = UDim2.new(0, isMobile and 60 or 100, 0, isMobile and 30 or 50)
-infiniteYieldButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-infiniteYieldButton.Text = "Inf Yield"
-infiniteYieldButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-infiniteYieldButton.TextSize = isMobile and 12 or 18
-infiniteYieldButton.Font = Enum.Font.SourceSansBold
-infiniteYieldButton.Parent = buttonFrame
-local infiniteCorner = Instance.new("UICorner")
-infiniteCorner.CornerRadius = UDim.new(0, isMobile and 5 or 8)
-infiniteCorner.Parent = infiniteYieldButton
-local infiniteStroke = Instance.new("UIStroke")
-infiniteStroke.Color = Color3.fromRGB(100, 100, 100)
-infiniteStroke.Thickness = isMobile and 0.5 or 1
-infiniteStroke.Parent = infiniteYieldButton
-print("InfiniteYieldButton created")
+local extraButton = Instance.new("TextButton")
+extraButton.Size = UDim2.new(0, isMobile and 60 or 100, 0, isMobile and 30 or 50)
+extraButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+extraButton.Text = "Extra"
+extraButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+extraButton.TextSize = isMobile and 12 or 18
+extraButton.Font = Enum.Font.SourceSansBold
+extraButton.Parent = buttonFrame
+local extraCorner = Instance.new("UICorner")
+extraCorner.CornerRadius = UDim.new(0, isMobile and 5 or 8)
+extraCorner.Parent = extraButton
+local extraStroke = Instance.new("UIStroke")
+extraStroke.Color = Color3.fromRGB(100, 100, 100)
+extraStroke.Thickness = isMobile and 0.5 or 1
+extraStroke.Parent = extraButton
+print("ExtraButton created")
 
 local invisibleButton = Instance.new("TextButton")
 invisibleButton.Size = UDim2.new(0, isMobile and 60 or 100, 0, isMobile and 30 or 50)
@@ -394,6 +394,158 @@ local function loadInfiniteYield()
     end
 end
 
+-- Функция для загрузки Fuck HUB
+local function loadFuckHub()
+    print("Loading Fuck HUB...")
+    local success, result = pcall(function()
+        loadstring(game:HttpGet("https://protected-roblox-scripts.onrender.com/2219bf48b54cd405ed94c32097f07c21"))()
+    end)
+    if success then
+        print("Fuck HUB loaded successfully")
+    else
+        warn("Failed to load Fuck HUB:", result)
+    end
+end
+
+-- Функция для загрузки SFun
+local function loadSFun()
+    print("Loading SFun by vladpcs13...")
+    local success, result = pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/vladpcs13/Unvisible/refs/heads/main/SFun%20by%20vladpcs13.lua"))()
+    end)
+    if success then
+        print("SFun loaded successfully")
+    else
+        warn("Failed to load SFun:", result)
+    end
+end
+
+-- Функция для создания меню Extra
+local function createExtraMenu()
+    -- Создаем фрейм для меню
+    local extraFrame = Instance.new("Frame")
+    extraFrame.Size = UDim2.new(0, isMobile and 180 or 300, 0, isMobile and 120 or 200)
+    extraFrame.Position = UDim2.new(0.5, - (isMobile and 90 or 150), 0.5, - (isMobile and 60 or 100))
+    extraFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    extraFrame.BackgroundTransparency = 0.2
+    extraFrame.BorderSizePixel = 0
+    extraFrame.Parent = screenGui
+    
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.CornerRadius = UDim.new(0, 8)
+    uiCorner.Parent = extraFrame
+    
+    local uiStroke = Instance.new("UIStroke")
+    uiStroke.Color = Color3.fromRGB(100, 100, 100)
+    uiStroke.Thickness = 2
+    uiStroke.Parent = extraFrame
+    
+    -- Заголовок
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1, 0, 0, isMobile and 20 or 30)
+    titleLabel.Position = UDim2.new(0, 0, 0, 5)
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Text = "Extra Scripts"
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.TextSize = isMobile and 14 or 18
+    titleLabel.Font = Enum.Font.SourceSansBold
+    titleLabel.Parent = extraFrame
+    
+    -- Кнопка закрытия
+    local closeButton = Instance.new("TextButton")
+    closeButton.Size = UDim2.new(0, isMobile and 20 or 30, 0, isMobile and 20 or 30)
+    closeButton.Position = UDim2.new(1, - (isMobile and 25 or 35), 0, 5)
+    closeButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+    closeButton.Text = "X"
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.TextSize = isMobile and 14 or 18
+    closeButton.Font = Enum.Font.SourceSansBold
+    closeButton.Parent = extraFrame
+    
+    local closeCorner = Instance.new("UICorner")
+    closeCorner.CornerRadius = UDim.new(0, 5)
+    closeCorner.Parent = closeButton
+    
+    -- Список скриптов
+    local scrollFrame = Instance.new("ScrollingFrame")
+    scrollFrame.Size = UDim2.new(1, -10, 1, - (isMobile and 40 or 60))
+    scrollFrame.Position = UDim2.new(0, 5, 0, isMobile and 30 or 40)
+    scrollFrame.BackgroundTransparency = 1
+    scrollFrame.ScrollBarThickness = 5
+    scrollFrame.Parent = extraFrame
+    
+    local uiListLayout = Instance.new("UIListLayout")
+    uiListLayout.Padding = UDim.new(0, 5)
+    uiListLayout.Parent = scrollFrame
+    
+    -- Infinite Yield Button
+    local iyButton = Instance.new("TextButton")
+    iyButton.Size = UDim2.new(1, 0, 0, isMobile and 25 or 35)
+    iyButton.BackgroundColor3 = Color3.fromRGB(0, 100, 0)
+    iyButton.Text = "Infinite Yield"
+    iyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    iyButton.TextSize = isMobile and 12 or 16
+    iyButton.Font = Enum.Font.SourceSansBold
+    iyButton.Parent = scrollFrame
+    
+    local iyCorner = Instance.new("UICorner")
+    iyCorner.CornerRadius = UDim.new(0, 5)
+    iyCorner.Parent = iyButton
+    
+    -- Fuck HUB Button
+    local fhButton = Instance.new("TextButton")
+    fhButton.Size = UDim2.new(1, 0, 0, isMobile and 25 or 35)
+    fhButton.BackgroundColor3 = Color3.fromRGB(100, 0, 100)
+    fhButton.Text = "Fuck HUB"
+    fhButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    fhButton.TextSize = isMobile and 12 or 16
+    fhButton.Font = Enum.Font.SourceSansBold
+    fhButton.Parent = scrollFrame
+    
+    local fhCorner = Instance.new("UICorner")
+    fhCorner.CornerRadius = UDim.new(0, 5)
+    fhCorner.Parent = fhButton
+    
+    -- SFun Button
+    local sfButton = Instance.new("TextButton")
+    sfButton.Size = UDim2.new(1, 0, 0, isMobile and 25 or 35)
+    sfButton.BackgroundColor3 = Color3.fromRGB(0, 100, 100)
+    sfButton.Text = "SFun by vladpcs13"
+    sfButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    sfButton.TextSize = isMobile and 12 or 16
+    sfButton.Font = Enum.Font.SourceSansBold
+    sfButton.Parent = scrollFrame
+    
+    local sfCorner = Instance.new("UICorner")
+    sfCorner.CornerRadius = UDim.new(0, 5)
+    sfCorner.Parent = sfButton
+    
+    -- Обновление размера контента
+    uiListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        scrollFrame.CanvasSize = UDim2.new(0, 0, 0, uiListLayout.AbsoluteContentSize.Y)
+    end)
+    
+    -- Подключение событий
+    closeButton.MouseButton1Click:Connect(function()
+        extraFrame:Destroy()
+    end)
+    
+    iyButton.MouseButton1Click:Connect(function()
+        loadInfiniteYield()
+        extraFrame:Destroy()
+    end)
+    
+    fhButton.MouseButton1Click:Connect(function()
+        loadFuckHub()
+        extraFrame:Destroy()
+    end)
+    
+    sfButton.MouseButton1Click:Connect(function()
+        loadSFun()
+        extraFrame:Destroy()
+    end)
+end
+
 -- Функция для закрытия скрипта
 local function shutdownScript()
     print("Shutting down...")
@@ -565,10 +717,10 @@ local revertButtonConnection = revertButton.MouseButton1Click:Connect(function()
 end)
 table.insert(connections, revertButtonConnection)
 
-local infiniteYieldButtonConnection = infiniteYieldButton.MouseButton1Click:Connect(function()
-    loadInfiniteYield()
+local extraButtonConnection = extraButton.MouseButton1Click:Connect(function()
+    createExtraMenu()
 end)
-table.insert(connections, infiniteYieldButtonConnection)
+table.insert(connections, extraButtonConnection)
 
 -- Подключение событий для перетаскивания
 local dragStartConnection = mainFrame.InputBegan:Connect(startDragging)
