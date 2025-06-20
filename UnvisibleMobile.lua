@@ -10,7 +10,7 @@ local camera = workspace.CurrentCamera
 -- Создание GUI для надписи и кнопок
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "GhostScriptGui"
-screenGui.ResetOnSpawn = false -- Prevent GUI from resetting on character respawn
+screenGui.ResetOnSpawn = false
 screenGui.Parent = player:WaitForChild("PlayerGui")
 print("ScreenGui created")
 
@@ -40,7 +40,7 @@ print("CloseButton created")
 
 local invisibleButton = Instance.new("TextButton")
 invisibleButton.Size = UDim2.new(0, 100, 0, 50)
-invisibleButton.Position = UDim2.new(1, -170, 0, 10) -- Positioned to the left of closeButton
+invisibleButton.Position = UDim2.new(1, -170, 0, 10)
 invisibleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
 invisibleButton.Text = "Hide/Show"
 invisibleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -49,10 +49,22 @@ invisibleButton.Font = Enum.Font.SourceSansBold
 invisibleButton.Parent = screenGui
 print("InvisibleButton created")
 
+local revertButton = Instance.new("TextButton")
+revertButton.Size = UDim2.new(0, 100, 0, 50)
+revertButton.Position = UDim2.new(1, -280, 0, 10)
+revertButton.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+revertButton.Text = "Revert"
+revertButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+revertButton.TextSize = 20
+revertButton.Font = Enum.Font.SourceSansBold
+revertButton.Parent = screenGui
+print("RevertButton created")
+
 -- Переменные
 local ghostPart = nil
 local platform = nil
 local isGhostMode = false
+local lastPosition = nil -- Moved to top-level scope
 local connections = {}
 
 -- Функция для создания платформы
@@ -64,7 +76,7 @@ local function createPlatform(position)
     platform = Instance.new("Part")
     platform.Name = "PlayerPlatform"
     platform.Size = Vector3.new(10, 1, 10)
-    platform.Position = position - Vector3.new(0, 3.5, 0) -- Под ногами игрока
+    platform.Position = position - Vector3.new(0, 3.5, 0)
     platform.Anchored = true
     platform.BrickColor = BrickColor.new("Really black")
     platform.Parent = workspace
@@ -72,7 +84,7 @@ local function createPlatform(position)
 end
 
 -- Функция для создания призрачного куба
-local function createGhostPart(lastPosition)
+local function createGhostPart(position)
     if ghostPart then
         ghostPart:Destroy()
         print("Old ghost part destroyed")
@@ -81,7 +93,7 @@ local function createGhostPart(lastPosition)
     ghostPart = Instance.new("Part")
     ghostPart.Name = "GhostPart"
     ghostPart.Size = Vector3.new(2, 2, 2)
-    ghostPart.Position = lastPosition.Position + Vector3.new(0, 2, 0)
+    ghostPart.Position = position.Position + Vector3.new(0, 2, 0)
     ghostPart.Transparency = 0.5
     ghostPart.BrickColor = BrickColor.new("Really white")
     ghostPart.CanCollide = true
@@ -89,21 +101,18 @@ local function createGhostPart(lastPosition)
     ghostPart.Parent = workspace
     print("Ghost part created at:", ghostPart.Position)
     
-    -- Добавляем BodyVelocity для движения
     local bodyVelocity = Instance.new("BodyVelocity")
     bodyVelocity.Name = "GhostVelocity"
     bodyVelocity.MaxForce = Vector3.new(math.huge, 0, math.huge)
     bodyVelocity.Velocity = Vector3.new(0, 0, 0)
     bodyVelocity.Parent = ghostPart
     
-    -- Добавляем BodyGyro для стабилизации
     local bodyGyro = Instance.new("BodyGyro")
     bodyGyro.Name = "GhostGyro"
     bodyGyro.MaxTorque = Vector3.new(0, math.huge, 0)
     bodyGyro.CFrame = CFrame.new(ghostPart.Position)
     bodyGyro.Parent = ghostPart
     
-    -- Привязываем камеру
     camera.CameraSubject = ghostPart
     camera.CameraType = Enum.CameraType.Follow
     print("Camera set to ghost part at:", ghostPart.Position)
@@ -149,6 +158,45 @@ local function makeGhostPartJump(input, gameProcessed)
     end
 end
 
+-- Функция для возврата к исходной позиции
+local function revertToOriginalPosition()
+    if not isGhostMode then
+        print("Not in ghost mode, no revert needed")
+        return
+    end
+    print("Reverting to original position...")
+    if lastPosition then
+        humanoidRootPart.CFrame = lastPosition
+        print("Player reverted to original position:", lastPosition.Position)
+    else
+        warn("No original position stored, teleporting to default position")
+        humanoidRootPart.CFrame = CFrame.new(0, 100, 0)
+    end
+    character.Humanoid.WalkSpeed = 16
+    character.Humanoid.JumpPower = 50
+    for _, part in pairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Transparency = 0
+        elseif part:IsA("Decal") then
+            part.Transparency = 0
+        end
+    end
+    camera.CameraSubject = character.Humanoid
+    camera.CameraType = Enum.CameraType.Follow
+    if ghostPart then
+        ghostPart:Destroy()
+        ghostPart = nil
+        print("Ghost part destroyed")
+    end
+    if platform then
+        platform:Destroy()
+        platform = nil
+        print("Platform destroyed")
+    end
+    isGhostMode = false
+    print("Revert completed")
+end
+
 -- Функция для телепортации
 local function teleportAndGhost()
     if isGhostMode then
@@ -184,24 +232,19 @@ local function teleportAndGhost()
         isGhostMode = false
     else
         print("Entering ghost mode...")
-        local lastPosition = humanoidRootPart.CFrame
+        lastPosition = humanoidRootPart.CFrame -- Store position
         print("Last player position saved:", lastPosition.Position)
         
-        -- Генерируем случайную позицию
         local teleportPosition = Vector3.new(math.random(-1000, 1000), 100, math.random(-1000, 1000))
         print("Generated teleport position:", teleportPosition)
         
-        -- Создаем платформу
         createPlatform(teleportPosition)
         
-        -- Телепортируем игрока
         humanoidRootPart.CFrame = CFrame.new(teleportPosition)
         print("Player teleported to:", teleportPosition)
         
-        -- Создаем куб
         createGhostPart(lastPosition)
         
-        -- Делаем игрока невидимым и неподвижным
         character.Humanoid.WalkSpeed = 0
         character.Humanoid.JumpPower = 0
         for _, part in ipairs(character:GetDescendants()) do
@@ -311,5 +354,11 @@ local invisibleButtonConnection = invisibleButton.MouseButton1Click:Connect(func
     teleportAndGhost()
 end)
 table.insert(connections, invisibleButtonConnection)
+
+local revertButtonConnection = revertButton.MouseButton1Click:Connect(function()
+    print("Revert button clicked")
+    revertToOriginalPosition()
+end)
+table.insert(connections, revertButtonConnection)
 
 print("Script initialized")
