@@ -9,6 +9,9 @@ local character = player.Character or player.CharacterAdded:Wait()
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 local camera = workspace.CurrentCamera
 
+-- Проверка, является ли устройство мобильным
+local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
+
 -- Создание GUI для надписи и кнопок
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "GhostScriptGui"
@@ -16,129 +19,130 @@ screenGui.ResetOnSpawn = false
 screenGui.Parent = player:WaitForChild("PlayerGui")
 print("ScreenGui created")
 
--- Создание фрейма для интерфейса
+-- Создание фрейма для интерфейса (размеры зависят от устройства)
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 387, 0, 100)
-mainFrame.Position = UDim2.new(1, -390, 0, 10)
+local frameSize = isMobile and UDim2.new(0, 200, 0, 60) or UDim2.new(0, 387, 0, 100)
+mainFrame.Size = frameSize
+mainFrame.Position = UDim2.new(1, - (isMobile and 210 or 390), 0, 10)
 mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 mainFrame.BackgroundTransparency = 0.5
 mainFrame.ClipsDescendants = true
 mainFrame.Parent = screenGui
 
 -- Анимация запуска
-mainFrame.Size = UDim2.new(0, 0, 0, 0) -- Начальный размер для анимации
-mainFrame.BackgroundTransparency = 1 -- Начальная прозрачность
+mainFrame.Size = UDim2.new(0, 0, 0, 0)
+mainFrame.BackgroundTransparency = 1
 local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-local tweenSize = TweenService:Create(mainFrame, tweenInfo, {Size = UDim2.new(0, 387, 0, 100)})
+local tweenSize = TweenService:Create(mainFrame, tweenInfo, {Size = frameSize})
 local tweenTransparency = TweenService:Create(mainFrame, tweenInfo, {BackgroundTransparency = 0.5})
 tweenSize:Play()
 tweenTransparency:Play()
 print("Startup animation played")
 
 local uiCorner = Instance.new("UICorner")
-uiCorner.CornerRadius = UDim.new(0, 10)
+uiCorner.CornerRadius = UDim.new(0, isMobile and 6 or 10)
 uiCorner.Parent = mainFrame
 
 local uiStroke = Instance.new("UIStroke")
 uiStroke.Color = Color3.fromRGB(100, 100, 100)
-uiStroke.Thickness = 2
+uiStroke.Thickness = isMobile and 1 or 2
 uiStroke.Parent = mainFrame
 
 local textLabel = Instance.new("TextLabel")
-textLabel.Size = UDim2.new(1, 0, 0, 30)
-textLabel.Position = UDim2.new(0, 0, 0, 5)
+textLabel.Size = UDim2.new(1, 0, 0, isMobile and 18 or 30)
+textLabel.Position = UDim2.new(0, 0, 0, isMobile and 3 or 5)
 textLabel.BackgroundTransparency = 1
 textLabel.Text = "Unvisible by vladpcs13 | t.me/idkbutjustvlad"
 textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 textLabel.TextStrokeTransparency = 0.8
 textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-textLabel.TextSize = 18
+textLabel.TextSize = isMobile and 12 or 18
 textLabel.Font = Enum.Font.SourceSansBold
+textLabel.TextScaled = isMobile -- Масштабирование текста для мобильных
 textLabel.Parent = mainFrame
 print("TextLabel created")
 
 local buttonFrame = Instance.new("Frame")
-buttonFrame.Size = UDim2.new(1, -20, 0, 60)
-buttonFrame.Position = UDim2.new(0, 10, 0, 40)
+buttonFrame.Size = UDim2.new(1, isMobile and -12 or -20, 0, isMobile and 36 or 60)
+buttonFrame.Position = UDim2.new(0, isMobile and 6 or 10, 0, isMobile and 24 or 40)
 buttonFrame.BackgroundTransparency = 1
 buttonFrame.Parent = mainFrame
 
 local uiListLayout = Instance.new("UIListLayout")
 uiListLayout.FillDirection = Enum.FillDirection.Horizontal
 uiListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-uiListLayout.Padding = UDim.new(0, 6)
+uiListLayout.Padding = UDim.new(0, isMobile and 4 or 6)
 uiListLayout.Parent = buttonFrame
 
 local closeButton = Instance.new("TextButton")
-closeButton.Size = UDim2.new(0, 50, 0, 50)
+closeButton.Size = UDim2.new(0, isMobile and 30 or 50, 0, isMobile and 30 or 50)
 closeButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 closeButton.Text = "X"
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeButton.TextSize = 24
+closeButton.TextSize = isMobile and 16 or 24
 closeButton.Font = Enum.Font.SourceSansBold
 closeButton.Parent = buttonFrame
 local closeCorner = Instance.new("UICorner")
-closeCorner.CornerRadius = UDim.new(0, 8)
+closeCorner.CornerRadius = UDim.new(0, isMobile and 5 or 8)
 closeCorner.Parent = closeButton
 local closeStroke = Instance.new("UIStroke")
 closeStroke.Color = Color3.fromRGB(100, 100, 100)
-closeStroke.Thickness = 1
+closeStroke.Thickness = isMobile and 0.5 or 1
 closeStroke.Parent = closeButton
 print("CloseButton created")
 
 local infiniteYieldButton = Instance.new("TextButton")
-infiniteYieldButton.Size = UDim2.new(0, 100, 0, 50)
+infiniteYieldButton.Size = UDim2.new(0, isMobile and 60 or 100, 0, isMobile and 30 or 50)
 infiniteYieldButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
 infiniteYieldButton.Text = "Inf Yield"
 infiniteYieldButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-infiniteYieldButton.TextSize = 18
+infiniteYieldButton.TextSize = isMobile and 12 or 18
 infiniteYieldButton.Font = Enum.Font.SourceSansBold
 infiniteYieldButton.Parent = buttonFrame
 local infiniteCorner = Instance.new("UICorner")
-infiniteCorner.CornerRadius = UDim.new(0, 8)
+infiniteCorner.CornerRadius = UDim.new(0, isMobile and 5 or 8)
 infiniteCorner.Parent = infiniteYieldButton
 local infiniteStroke = Instance.new("UIStroke")
 infiniteStroke.Color = Color3.fromRGB(100, 100, 100)
-infiniteStroke.Thickness = 1
+infiniteStroke.Thickness = isMobile and 0.5 or 1
 infiniteStroke.Parent = infiniteYieldButton
 print("InfiniteYieldButton created")
 
 local invisibleButton = Instance.new("TextButton")
-invisibleButton.Size = UDim2.new(0, 100, 0, 50)
+invisibleButton.Size = UDim2.new(0, isMobile and 60 or 100, 0, isMobile and 30 or 50)
 invisibleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
 invisibleButton.Text = "Hide/Show"
 invisibleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-invisibleButton.TextSize = 18
+invisibleButton.TextSize = isMobile and 12 or 18
 invisibleButton.Font = Enum.Font.SourceSansBold
 invisibleButton.Parent = buttonFrame
 local invisibleCorner = Instance.new("UICorner")
-invisibleCorner.CornerRadius = UDim.new(0, 8)
+invisibleCorner.CornerRadius = UDim.new(0, isMobile and 5 or 8)
 invisibleCorner.Parent = invisibleButton
 local invisibleStroke = Instance.new("UIStroke")
 invisibleStroke.Color = Color3.fromRGB(100, 100, 100)
-invisibleStroke.Thickness = 1
+invisibleStroke.Thickness = isMobile and 0.5 or 1
 invisibleStroke.Parent = invisibleButton
 print("InvisibleButton created")
 
 local revertButton = Instance.new("TextButton")
-revertButton.Size = UDim2.new(0, 100, 0, 50)
+revertButton.Size = UDim2.new(0, isMobile and 60 or 100, 0, isMobile and 30 or 50)
 revertButton.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
 revertButton.Text = "Revert"
 revertButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-revertButton.TextSize = 18
+revertButton.TextSize = isMobile and 12 or 18
 revertButton.Font = Enum.Font.SourceSansBold
 revertButton.Parent = buttonFrame
 local revertCorner = Instance.new("UICorner")
-revertCorner.CornerRadius = UDim.new(0, 8)
+revertCorner.CornerRadius = UDim.new(0, isMobile and 5 or 8)
 revertCorner.Parent = revertButton
 local revertStroke = Instance.new("UIStroke")
 revertStroke.Color = Color3.fromRGB(100, 100, 100)
-revertStroke.Thickness = 1
+revertStroke.Thickness = isMobile and 0.5 or 1
 revertStroke.Parent = revertButton
 print("RevertButton created")
 
 -- Джойстик для мобильных устройств
-local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
 local joystickOuter = nil
 local joystickInner = nil
 local joystickActive = false
@@ -147,8 +151,8 @@ local joystickInput = Vector2.new(0, 0)
 
 if isMobile then
     joystickOuter = Instance.new("Frame")
-    joystickOuter.Size = UDim2.new(0, 100, 0, 100)
-    joystickOuter.Position = UDim2.new(0, 50, 1, -150)
+    joystickOuter.Size = UDim2.new(0, 80, 0, 80)
+    joystickOuter.Position = UDim2.new(0, 30, 1, -110)
     joystickOuter.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     joystickOuter.BackgroundTransparency = 0.5
     joystickOuter.Parent = screenGui
@@ -157,8 +161,8 @@ if isMobile then
     joystickOuterCorner.Parent = joystickOuter
 
     joystickInner = Instance.new("Frame")
-    joystickInner.Size = UDim2.new(0, 50, 0, 50)
-    joystickInner.Position = UDim2.new(0.5, -25, 0.5, -25)
+    joystickInner.Size = UDim2.new(0, 40, 0, 40)
+    joystickInner.Position = UDim2.new(0.5, -20, 0.5, -20)
     joystickInner.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     joystickInner.BackgroundTransparency = 0.2
     joystickInner.Parent = joystickOuter
@@ -239,7 +243,7 @@ local function updateGhostPartMovement()
     
     if isMobile and joystickActive then
         -- Управление джойстиком
-        local inputVector = joystickInput / 50 -- Нормализация (радиус внешнего круга = 50)
+        local inputVector = joystickInput / 40 -- Нормализация (радиус внешнего круга = 40)
         moveDirection = cameraCFrame:VectorToWorldSpace(Vector3.new(inputVector.X, 0, inputVector.Y)) * speed
     else
         -- Управление клавишами
@@ -472,7 +476,7 @@ local function startJoystick(input)
     if isMobile and input.UserInputType == Enum.UserInputType.Touch then
         joystickActive = true
         joystickOrigin = input.Position
-        joystickInner.Position = UDim2.new(0.5, -25, 0.5, -25)
+        joystickInner.Position = UDim2.new(0.5, -20, 0.5, -20)
         print("Joystick activated")
     end
 end
@@ -480,13 +484,13 @@ end
 local function updateJoystick(input)
     if joystickActive and input.UserInputType == Enum.UserInputType.Touch then
         local delta = input.Position - joystickOrigin
-        local maxRadius = 50
+        local maxRadius = 40
         local magnitude = delta.Magnitude
         if magnitude > maxRadius then
             delta = delta.Unit * maxRadius
         end
         joystickInput = delta
-        joystickInner.Position = UDim2.new(0.5, delta.X - 25, 0.5, delta.Y - 25)
+        joystickInner.Position = UDim2.new(0.5, delta.X - 20, 0.5, delta.Y - 20)
     end
 end
 
@@ -494,7 +498,7 @@ local function stopJoystick()
     if joystickActive then
         joystickActive = false
         joystickInput = Vector2.new(0, 0)
-        joystickInner.Position = UDim2.new(0.5, -25, 0.5, -25)
+        joystickInner.Position = UDim2.new(0.5, -20, 0.5, -20)
         print("Joystick deactivated")
     end
 end
