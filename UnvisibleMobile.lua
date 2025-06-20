@@ -10,6 +10,7 @@ local camera = workspace.CurrentCamera
 -- Создание GUI для надписи и кнопок
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "GhostScriptGui"
+screenGui.ResetOnSpawn = false -- Prevent GUI from resetting on character respawn
 screenGui.Parent = player:WaitForChild("PlayerGui")
 print("ScreenGui created")
 
