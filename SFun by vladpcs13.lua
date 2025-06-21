@@ -14,9 +14,9 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "CustomMenu"
 screenGui.Parent = playerGui
 
--- Основной фрейм меню
+-- Основной фрейм меню (изменены размеры для мобильных устройств)
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = isMobile and UDim2.new(0.7, 0, 0.5, 0) or UDim2.new(0, 300, 0, 400)
+mainFrame.Size = isMobile and UDim2.new(0.45, 0, 0.45, 0) or UDim2.new(0, 300, 0, 400)
 mainFrame.Position = UDim2.new(0.5, -mainFrame.Size.X.Offset/2, 0.5, -mainFrame.Size.Y.Offset/2)
 mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 mainFrame.BackgroundTransparency = 0.4
@@ -43,17 +43,17 @@ shadow.Parent = mainFrame
 -- Анимация появления
 mainFrame.Size = UDim2.new(0, 0, 0, 0)
 local tweenInfo = TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
-local tween = TweenService:Create(mainFrame, tweenInfo, {Size = isMobile and UDim2.new(0.7, 0, 0.5, 0) or UDim2.new(0, 300, 0, 400)})
+local tween = TweenService:Create(mainFrame, tweenInfo, {Size = isMobile and UDim2.new(0.45, 0, 0.45, 0) or UDim2.new(0, 300, 0, 400)})
 tween:Play()
 
--- Кнопка закрытия
+-- Кнопка закрытия (уменьшена для мобильных устройств)
 local closeButton = Instance.new("TextButton")
-closeButton.Size = UDim2.new(0, 30, 0, 30)
-closeButton.Position = UDim2.new(1, -35, 0, 5)
+closeButton.Size = isMobile and UDim2.new(0, 25, 0, 25) or UDim2.new(0, 30, 0, 30)
+closeButton.Position = isMobile and UDim2.new(1, -30, 0, 5) or UDim2.new(1, -35, 0, 5)
 closeButton.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
 closeButton.Text = "X"
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeButton.TextSize = 16
+closeButton.TextSize = isMobile and 14 or 16
 closeButton.Parent = mainFrame
 local closeCorner = Instance.new("UICorner")
 closeCorner.CornerRadius = UDim.new(0, 8)
@@ -103,9 +103,9 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- Вкладки
+-- Вкладки (уменьшены для мобильных устройств)
 local tabFrame = Instance.new("Frame")
-tabFrame.Size = UDim2.new(1, -10, 0, 40)
+tabFrame.Size = UDim2.new(1, -10, 0, isMobile and 30 or 40)
 tabFrame.Position = UDim2.new(0, 5, 0, 5)
 tabFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 tabFrame.BackgroundTransparency = 0.5
@@ -120,7 +120,7 @@ playerTabButton.Position = UDim2.new(0, 5, 0, 2.5)
 playerTabButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 playerTabButton.Text = "Player"
 playerTabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-playerTabButton.TextSize = 16
+playerTabButton.TextSize = isMobile and 12 or 16
 playerTabButton.Parent = tabFrame
 local playerTabCorner = Instance.new("UICorner")
 playerTabCorner.CornerRadius = UDim.new(0, 6)
@@ -132,22 +132,22 @@ funTabButton.Position = UDim2.new(0.5, 0, 0, 2.5)
 funTabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 funTabButton.Text = "Fun"
 funTabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-funTabButton.TextSize = 16
+funTabButton.TextSize = isMobile and 12 or 16
 funTabButton.Parent = tabFrame
 local funTabCorner = Instance.new("UICorner")
 funTabCorner.CornerRadius = UDim.new(0, 6)
 funTabCorner.Parent = funTabButton
 
--- Контейнеры для вкладок
+-- Контейнеры для вкладок (уменьшены для мобильных устройств)
 local playerTab = Instance.new("Frame")
-playerTab.Size = UDim2.new(1, -10, 1, -50)
-playerTab.Position = UDim2.new(0, 5, 0, 50)
+playerTab.Size = UDim2.new(1, -10, 1, isMobile and -40 or -50)
+playerTab.Position = UDim2.new(0, 5, 0, isMobile and 40 or 50)
 playerTab.BackgroundTransparency = 1
 playerTab.Parent = mainFrame
 
 local funTab = Instance.new("Frame")
-funTab.Size = UDim2.new(1, -10, 1, -50)
-funTab.Position = UDim2.new(0, 5, 0, 50)
+funTab.Size = UDim2.new(1, -10, 1, isMobile and -40 or -50)
+funTab.Position = UDim2.new(0, 5, 0, isMobile and 40 or 50)
 funTab.BackgroundTransparency = 1
 funTab.Parent = mainFrame
 funTab.Visible = false
@@ -168,10 +168,10 @@ funTabButton.MouseButton1Click:Connect(function()
     switchTab(funTab, playerTab, funTabButton, playerTabButton)
 end)
 
--- Функция создания ползунка
+-- Функция создания ползунка (адаптирована для мобильных устройств)
 local function createSlider(parent, name, min, max, default, yPos, callback)
     local sliderFrame = Instance.new("Frame")
-    sliderFrame.Size = UDim2.new(0.95, 0, 0, 40)
+    sliderFrame.Size = UDim2.new(0.95, 0, 0, isMobile and 30 or 40)
     sliderFrame.Position = UDim2.new(0.025, 0, 0, yPos)
     sliderFrame.BackgroundTransparency = 1
     sliderFrame.Parent = parent
@@ -180,13 +180,13 @@ local function createSlider(parent, name, min, max, default, yPos, callback)
     label.Size = UDim2.new(0.4, 0, 1, 0)
     label.Text = name
     label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    label.TextSize = 14
+    label.TextSize = isMobile and 10 or 14
     label.BackgroundTransparency = 1
     label.Parent = sliderFrame
     
     local slider = Instance.new("TextButton")
-    slider.Size = UDim2.new(0.6, 0, 0.25, 0)
-    slider.Position = UDim2.new(0.4, 0, 0.375, 0)
+    slider.Size = UDim2.new(0.6, 0, isMobile and 0.3 or 0.25, 0)
+    slider.Position = UDim2.new(0.4, 0, isMobile and 0.35 or 0.375, 0)
     slider.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     slider.Text = ""
     slider.Parent = sliderFrame
@@ -207,7 +207,7 @@ local function createSlider(parent, name, min, max, default, yPos, callback)
     valueLabel.Position = UDim2.new(0.8, 0, 0, 0)
     valueLabel.Text = tostring(default)
     valueLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    valueLabel.TextSize = 14
+    valueLabel.TextSize = isMobile and 10 or 14
     valueLabel.BackgroundTransparency = 1
     valueLabel.Parent = sliderFrame
     
@@ -236,31 +236,31 @@ local function createSlider(parent, name, min, max, default, yPos, callback)
     end)
 end
 
--- Вкладка Player: ползунки
-createSlider(playerTab, "Gravity", 50, 200, 196, 10, function(value)
+-- Вкладка Player: ползунки (уменьшены интервалы для мобильных устройств)
+createSlider(playerTab, "Gravity", 50, 200, 196, isMobile and 5 or 10, function(value)
     workspace.Gravity = value
 end)
 
-createSlider(playerTab, "Speed", 16, 100, 16, 60, function(value)
+createSlider(playerTab, "Speed", 16, 100, 16, isMobile and 40 or 60, function(value)
     if player.Character and player.Character:FindFirstChild("Humanoid") then
         player.Character.Humanoid.WalkSpeed = value
     end
 end)
 
-createSlider(playerTab, "Jump", 50, 200, 50, 110, function(value)
+createSlider(playerTab, "Jump", 50, 200, 50, isMobile and 75 or 110, function(value)
     if player.Character and player.Character:FindFirstChild("Humanoid") then
         player.Character.Humanoid.JumpPower = value
     end
 end)
 
--- Вкладка Player: кнопка Fast Reset
+-- Вкладка Player: кнопка Fast Reset (уменьшена для мобильных устройств)
 local resetButton = Instance.new("TextButton")
-resetButton.Size = UDim2.new(0.95, 0, 0, 40)
-resetButton.Position = UDim2.new(0.025, 0, 0, 160)
+resetButton.Size = UDim2.new(0.95, 0, 0, isMobile and 25 or 40)
+resetButton.Position = UDim2.new(0.025, 0, 0, isMobile and 110 or 160)
 resetButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 resetButton.Text = "Fast Reset"
 resetButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-resetButton.TextSize = 16
+resetButton.TextSize = isMobile and 12 or 16
 resetButton.Parent = playerTab
 local resetCorner = Instance.new("UICorner")
 resetCorner.CornerRadius = UDim.new(0, 8)
@@ -272,14 +272,14 @@ resetButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Вкладка Player: переключатель Noclip
+-- Вкладка Player: переключатель Noclip (уменьшен для мобильных устройств)
 local noclipToggle = Instance.new("TextButton")
-noclipToggle.Size = UDim2.new(0.95, 0, 0, 40)
-noclipToggle.Position = UDim2.new(0.025, 0, 0, 210)
+noclipToggle.Size = UDim2.new(0.95, 0, 0, isMobile and 25 or 40)
+noclipToggle.Position = UDim2.new(0.025, 0, 0, isMobile and 140 or 210)
 noclipToggle.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 noclipToggle.Text = "Noclip: OFF"
 noclipToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-noclipToggle.TextSize = 16
+noclipToggle.TextSize = isMobile and 12 or 16
 noclipToggle.Parent = playerTab
 local noclipCorner = Instance.new("UICorner")
 noclipCorner.CornerRadius = UDim.new(0, 8)
@@ -313,14 +313,14 @@ player.CharacterAdded:Connect(function(character)
     end
 end)
 
--- Вкладка Fun: JerkTool
+-- Вкладка Fun: JerkTool (уменьшена для мобильных устройств)
 local jerkButton = Instance.new("TextButton")
-jerkButton.Size = UDim2.new(0.95, 0, 0, 40)
-jerkButton.Position = UDim2.new(0.025, 0, 0, 10)
+jerkButton.Size = UDim2.new(0.95, 0, 0, isMobile and 25 or 40)
+jerkButton.Position = UDim2.new(0.025, 0, 0, isMobile and 5 or 10)
 jerkButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 jerkButton.Text = "Get Jerk"
 jerkButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-jerkButton.TextSize = 16
+jerkButton.TextSize = isMobile and 12 or 16
 jerkButton.Parent = funTab
 local jerkCorner = Instance.new("UICorner")
 jerkCorner.CornerRadius = UDim.new(0, 8)
@@ -332,7 +332,7 @@ jerkButton.MouseButton1Click:Connect(function()
     tool.RequiresHandle = false
     tool.Parent = player.Backpack
     
-    local animationId = "rbxassetid://148840371" -- Замените на ваш AnimationId
+    local animationId = "rbxassetid://148840371"
     local animation = Instance.new("Animation")
     animation.AnimationId = animationId
     
@@ -347,26 +347,20 @@ jerkButton.MouseButton1Click:Connect(function()
                     track:Play()
                     task.wait(5)
                     track:Stop()
-                else
-                    warn("Animator not found in Humanoid")
                 end
-            else
-                warn("Humanoid not found in Character")
             end
-        else
-            warn("Character not found")
         end
     end)
 end)
 
--- Вкладка Fun: переключатель Swim
+-- Вкладка Fun: переключатель Swim (уменьшен для мобильных устройств)
 local swimToggle = Instance.new("TextButton")
-swimToggle.Size = UDim2.new(0.95, 0, 0, 40)
-swimToggle.Position = UDim2.new(0.025, 0, 0, 60)
+swimToggle.Size = UDim2.new(0.95, 0, 0, isMobile and 25 or 40)
+swimToggle.Position = UDim2.new(0.025, 0, 0, isMobile and 35 or 60)
 swimToggle.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 swimToggle.Text = "Swim: OFF"
 swimToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-swimToggle.TextSize = 16
+swimToggle.TextSize = isMobile and 12 or 16
 swimToggle.Parent = funTab
 local swimCorner = Instance.new("UICorner")
 swimCorner.CornerRadius = UDim.new(0, 8)
@@ -432,9 +426,9 @@ player.CharacterAdded:Connect(function()
     end
 end)
 
--- Вкладка Fun: ползунок вращения
+-- Вкладка Fun: ползунок вращения (уменьшен для мобильных устройств)
 local angularVelocity
-createSlider(funTab, "Rotation Speed", 0, 100, 0, 110, function(value)
+createSlider(funTab, "Rotation Speed", 0, 100, 0, isMobile and 65 or 110, function(value)
     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         local rootPart = player.Character.HumanoidRootPart
         if not angularVelocity then
@@ -446,14 +440,14 @@ createSlider(funTab, "Rotation Speed", 0, 100, 0, 110, function(value)
     end
 end)
 
--- Вкладка Fun: кнопка остановки вращения
+-- Вкладка Fun: кнопка остановки вращения (уменьшена для мобильных устройств)
 local stopRotationButton = Instance.new("TextButton")
-stopRotationButton.Size = UDim2.new(0.95, 0, 0, 40)
-stopRotationButton.Position = UDim2.new(0.025, 0, 0, 160)
+stopRotationButton.Size = UDim2.new(0.95, 0, 0, isMobile and 25 or 40)
+stopRotationButton.Position = UDim2.new(0.025, 0, 0, isMobile and 95 or 160)
 stopRotationButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 stopRotationButton.Text = "Stop Rotation"
 stopRotationButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-stopRotationButton.TextSize = 16
+stopRotationButton.TextSize = isMobile and 12 or 16
 stopRotationButton.Parent = funTab
 local stopRotationCorner = Instance.new("UICorner")
 stopRotationCorner.CornerRadius = UDim.new(0, 8)
@@ -465,16 +459,16 @@ stopRotationButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Вкладка Fun: ExplodeTool и Revert
+-- Вкладка Fun: ExplodeTool и Revert (уменьшены для мобильных устройств)
 local explodedParts = {}
 
 local explodeButton = Instance.new("TextButton")
-explodeButton.Size = UDim2.new(0.95, 0, 0, 40)
-explodeButton.Position = UDim2.new(0.025, 0, 0, 210)
+explodeButton.Size = UDim2.new(0.95, 0, 0, isMobile and 25 or 40)
+explodeButton.Position = UDim2.new(0.025, 0, 0, isMobile and 125 or 210)
 explodeButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 explodeButton.Text = "Explode Tool"
 explodeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-explodeButton.TextSize = 16
+explodeButton.TextSize = isMobile and 12 or 16
 explodeButton.Parent = funTab
 local explodeCorner = Instance.new("UICorner")
 explodeCorner.CornerRadius = UDim.new(0, 8)
@@ -501,12 +495,12 @@ explodeButton.MouseButton1Click:Connect(function()
 end)
 
 local revertButton = Instance.new("TextButton")
-revertButton.Size = UDim2.new(0.95, 0, 0, 40)
-revertButton.Position = UDim2.new(0.025, 0, 0, 260)
+revertButton.Size = UDim2.new(0.95, 0, 0, isMobile and 25 or 40)
+revertButton.Position = UDim2.new(0.025, 0, 0, isMobile and 155 or 260)
 revertButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 revertButton.Text = "Revert"
 revertButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-revertButton.TextSize = 16
+revertButton.TextSize = isMobile and 12 or 16
 revertButton.Parent = funTab
 local revertCorner = Instance.new("UICorner")
 revertCorner.CornerRadius = UDim.new(0, 8)
