@@ -122,6 +122,7 @@ local ghostPart = nil
 local platform = nil
 local isGhostMode = false
 local lastPosition = nil
+local lastDeathPosition = nil
 local connections = {}
 local isDragging = false
 local dragStart = nil
@@ -143,7 +144,7 @@ if isMobile then
     joystickInner.Position = UDim2.new(0.5, -20, 0.5, -20)
     joystickInner.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     joystickInner.BackgroundTransparency = 0.2
-    joystickInner.Parent = joystickOuter
+    joystickInner.Parent = joystick patioOuter.Parent = joystickOuter
     local joystickInnerCorner = Instance.new("UICorner")
     joystickInnerCorner.CornerRadius = UDim.new(0.5, 0)
     joystickInnerCorner.Parent = joystickInner
@@ -247,6 +248,24 @@ local function revertToOriginalPosition()
     isGhostMode = false
     isFlyMode = false
     print("Reverted to original position") -- Отладка: возврат к исходной позиции
+end
+
+local function teleportToLastDeath()
+    if lastDeathPosition then
+        humanoidRootPart.CFrame = CFrame.new(lastDeathPosition + Vector3.new(0, 3, 0))
+        createPlatform(lastDeathPosition)
+        if isGhostMode then
+            revertToOriginalPosition()
+        end
+        print("Teleported to last death position") -- Отладка: телепортация к последней позиции смерти
+    else
+        warn("No death position recorded")
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "No Death Position",
+            Text = "You haven't died yet!",
+            Duration = 3
+        })
+    end
 end
 
 local function teleportAndGhost()
@@ -356,13 +375,18 @@ local function createExtraMenu()
         {Name = "Infinite Yield", Url = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source", Color = Color3.fromRGB(0, 100, 0)},
         {Name = "Fuck HUB", Url = "https://protected-roblox-scripts.onrender.com/2219bf48b54cd405ed94c32097f07c21", Color = Color3.fromRGB(100, 0, 100)},
         {Name = "SFun by vladpcs13", Url = "https://raw.githubusercontent.com/vladpcs13/Unvisible/refs/heads/main/SFun%20by%20vladpcs13.lua", Color = Color3.fromRGB(0, 100, 100)},
-        {Name = "Heal Me! by vladpcs13", Url = "https://raw.githubusercontent.com/vladpcs13/Unvisible/refs/heads/main/Heal%20Me!.lua", Color = Color3.fromRGB(0, 150, 150)}
+        {Name = "Heal Me! by vladpcs13", Url = "https://raw.githubusercontent.com/vladpcs13/Unvisible/refs/heads/main/Heal%20Me!.lua", Color = Color3.fromRGB(0, 150, 150)},
+        {Name = "Back to Reset", Url = nil, Color = Color3.fromRGB(200, 100, 0)}
     }
 
     for _, scriptData in ipairs(scripts) do
         local button = createButton(scrollFrame, UDim2.new(1, 0, 0, isMobile and 25 or 35), scriptData.Color, scriptData.Name, isMobile and 12 or 16, 5, 1)
         button.MouseButton1Click:Connect(function()
-            loadScript(scriptData.Url)
+            if scriptData.Url then
+                loadScript(scriptData.Url)
+            else
+                teleportToLastDeath()
+            end
             extraFrame:Destroy()
         end)
     end
@@ -495,6 +519,11 @@ local function connectEvents()
             end
             print("Character respawned, resetting ghost mode") -- Отладка: респавн персонажа
         end
+    end))
+
+    table.insert(connections, character.Humanoid.Died:Connect(function()
+        lastDeathPosition = humanoidRootPart.Position
+        print("Death position recorded at", lastDeathPosition) -- Отладка: позиция смерти сохранена
     end))
 
     table.insert(connections, closeButton.MouseButton1Click:Connect(function()
