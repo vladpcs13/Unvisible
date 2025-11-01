@@ -19,7 +19,7 @@ local Window = Rayfield:CreateWindow({
 
 local MainTab = Window:CreateTab("Main", 4483362458)
 local SettingsTab = Window:CreateTab("Settings", 4483362458)
-local MiscTab = Window:CreateTab("Misc", 4483362458) -- Новая вкладка
+local MiscTab = Window:CreateTab("Misc", 4483362458)
 
 local invis_on = false
 local fly_on = false
@@ -28,18 +28,15 @@ local flyConnection
 local bodyVelocity
 local bodyGyro
 local keybind = "X"
-local transparency_level = 0.5 -- По умолчанию
-
--- Мобильные контролы
+local transparency_level = 0.5
 local mobileFlyGui = nil
 local isMobile = game:GetService("UserInputService").TouchEnabled and not game:GetService("UserInputService").KeyboardEnabled
+local mobileInputState = {W = false, A = false, S = false, D = false, Space = false, LeftShift = false}
 
 function toggleInvisibility()
     invis_on = not invis_on
-
     local character = game.Players.LocalPlayer.Character
     if not character then return end
-
     if invis_on then
         local savedpos = character.HumanoidRootPart.CFrame
         task.wait()
@@ -56,31 +53,15 @@ function toggleInvisibility()
         Weld.Part1 = character:FindFirstChild("Torso") or character:FindFirstChild("UpperTorso")
         task.wait()
         Seat.CFrame = savedpos
-        
-        Rayfield:Notify({
-            Title = "Invisible On",
-            Content = "",
-            Duration = 1,
-            Image = 4483362458
-        })
-        
+        Rayfield:Notify({Title = "Invisible On", Content = "", Duration = 1, Image = 4483362458})
         applyTransparency(transparency_level)
         updateToggleButton(true)
     else
         local chair = workspace:FindFirstChild('invischair')
         if chair then chair:Destroy() end
-        
-        Rayfield:Notify({
-            Title = "Invisible Off",
-            Content = "",
-            Duration = 1,
-            Image = 4483362458
-        })
-        
+        Rayfield:Notify({Title = "Invisible Off", Content = "", Duration = 1, Image = 4483362458})
         applyTransparency(0)
-        if fly_on then
-            toggleFly()
-        end
+        if fly_on then toggleFly() end
         updateToggleButton(false)
     end
 end
@@ -102,149 +83,105 @@ function toggleFly()
     local character = game.Players.LocalPlayer.Character
     local root = character and character:FindFirstChild("HumanoidRootPart")
     if not root then return end
-
     if fly_on then
         bodyVelocity = Instance.new("BodyVelocity")
-        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-        bodyVelocity.MaxForce = Vector3.new(40000, 40000, 40000)
+        bodyVelocity.Velocity = Vector3.new(0,0,0)
+        bodyVelocity.MaxForce = Vector3.new(40000,40000,40000)
         bodyVelocity.Parent = root
-
         bodyGyro = Instance.new("BodyGyro")
         bodyGyro.P = 20000
-        bodyGyro.MaxTorque = Vector3.new(40000, 40000, 40000)
+        bodyGyro.MaxTorque = Vector3.new(40000,40000,40000)
         bodyGyro.CFrame = root.CFrame
         bodyGyro.Parent = root
-
-        if isMobile then
-            createMobileFlyControls()
-        end
-
+        if isMobile then createMobileFlyControls() end
         updateFlyButton(true)
     else
         if bodyVelocity then bodyVelocity:Destroy() end
         if bodyGyro then bodyGyro:Destroy() end
         bodyVelocity = nil
         bodyGyro = nil
-
-        if mobileFlyGui then
-            mobileFlyGui:Destroy()
-            mobileFlyGui = nil
-        end
-
+        if mobileFlyGui then mobileFlyGui:Destroy() mobileFlyGui = nil end
         updateFlyButton(false)
     end
 end
 
--- Мобильные кнопки для fly
 function createMobileFlyControls()
     if mobileFlyGui then mobileFlyGui:Destroy() end
-
     local player = game.Players.LocalPlayer
     local playerGui = player:WaitForChild("PlayerGui")
-
     mobileFlyGui = Instance.new("ScreenGui")
     mobileFlyGui.Name = "MobileFlyControls"
     mobileFlyGui.ResetOnSpawn = false
     mobileFlyGui.Parent = playerGui
-
-    local buttons = {}
-    local keys = {"W", "A", "S", "D", "Space", "LeftShift"}
+    local keyMap = {W="W",A="A",S="S",D="D",Space="Up",LeftShift="Down"}
     local positions = {
-        W = UDim2.new(0.1, 0, 0.7, 0),
-        A = UDim2.new(0.02, 0, 0.8, 0),
-        S = UDim2.new(0.1, 0, 0.9, 0),
-        D = UDim2.new(0.18, 0, 0.8, 0),
-        Space = UDim2.new(0.8, 0, 0.8, 0),
-        LeftShift = UDim2.new(0.8, 0, 0.9, 0),
+        W=UDim2.new(0.1,0,0.7,0),A=UDim2.new(0.02,0,0.8,0),S=UDim2.new(0.1,0,0.9,0),
+        D=UDim2.new(0.18,0,0.8,0),Space=UDim2.new(0.8,0,0.8,0),LeftShift=UDim2.new(0.8,0,0.9,0)
     }
-
-    for _, key in ipairs(keys) do
+    for key,label in pairs(keyMap) do
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0, 60, 0, 60)
+        btn.Size = UDim2.new(0,60,0,60)
         btn.Position = positions[key]
-        btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        btn.BackgroundColor3 = Color3.fromRGB(30,30,30)
         btn.BorderSizePixel = 2
-        btn.BorderColor3 = Color3.fromRGB(255, 255, 255)
-        btn.Text = key == "Space" and "↑" or key == "LeftShift" and "↓" or key
-        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        btn.Font = Enum.Font.SourceSansBold
-        btn.TextSize = 24
+        btn.BorderColor3 = Color3.fromRGB(100,255,100)
+        btn.Text = label
+        btn.TextColor3 = Color3.fromRGB(255,255,255)
+        btn.Font = Enum.Font.GothamBold
+        btn.TextSize = 20
         btn.Parent = mobileFlyGui
-        buttons[key] = btn
-
-        btn.MouseButton1Down:Connect(function()
-            game:GetService("ContextActionService"):CallFunction("FlyInput", Enum.KeyCode[key], Enum.UserInputState.Begin)
-        end)
-        btn.MouseButton1Up:Connect(function()
-            game:GetService("ContextActionService"):CallFunction("FlyInput", Enum.KeyCode[key], Enum.UserInputState.End)
-        end)
+        btn.MouseButton1Down:Connect(function() mobileInputState[key]=true end)
+        btn.MouseButton1Up:Connect(function() mobileInputState[key]=false end)
+        btn.TouchTap:Connect(function() mobileInputState[key]=true end)
+        btn.TouchReleased:Connect(function() mobileInputState[key]=false end)
     end
 end
 
--- Fly логика (общая для ПК и мобильных)
+if flyConnection then flyConnection:Disconnect() end
 flyConnection = game:GetService("RunService").RenderStepped:Connect(function()
     if not fly_on or not bodyVelocity or not bodyGyro then return end
-
+    local character = game.Players.LocalPlayer.Character
+    local root = character and character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
     local camera = workspace.CurrentCamera
-    local move = Vector3.new(0, 0, 0)
+    local move = Vector3.new(0,0,0)
+    local speed = 100
     local UIS = game:GetService("UserInputService")
-
-    -- ПК ввод
     if UIS:IsKeyDown(Enum.KeyCode.W) then move += camera.CFrame.LookVector end
     if UIS:IsKeyDown(Enum.KeyCode.S) then move -= camera.CFrame.LookVector end
     if UIS:IsKeyDown(Enum.KeyCode.A) then move -= camera.CFrame.RightVector end
     if UIS:IsKeyDown(Enum.KeyCode.D) then move += camera.CFrame.RightVector end
-    if UIS:IsKeyDown(Enum.KeyCode.Space) then move += Vector3.new(0, 1, 0) end
-    if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then move -= Vector3.new(0, 1, 0) end
-
-    -- Мобильный ввод через ContextActionService
-    local mobileMove = game:GetService("ContextActionService"):GetCurrentLocalState("FlyInput")
-    if mobileMove then
-        if mobileMove[Enum.KeyCode.W] then move += camera.CFrame.LookVector end
-        if mobileMove[Enum.KeyCode.S] then move -= camera.CFrame.LookVector end
-        if mobileMove[Enum.KeyCode.A] then move -= camera.CFrame.RightVector end
-        if mobileMove[Enum.KeyCode.D] then move += camera.CFrame.RightVector end
-        if mobileMove[Enum.KeyCode.Space] then move += Vector3.new(0, 1, 0) end
-        if mobileMove[Enum.KeyCode.LeftShift] then move -= Vector3.new(0, 1, 0) end
+    if UIS:IsKeyDown(Enum.KeyCode.Space) then move += Vector3.new(0,1,0) end
+    if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then move -= Vector3.new(0,1,0) end
+    if isMobile then
+        if mobileInputState.W then move += camera.CFrame.LookVector end
+        if mobileInputState.S then move -= camera.CFrame.LookVector end
+        if mobileInputState.A then move -= camera.CFrame.RightVector end
+        if mobileInputState.D then move += camera.CFrame.RightVector end
+        if mobileInputState.Space then move += Vector3.new(0,1,0) end
+        if mobileInputState.LeftShift then move -= Vector3.new(0,1,0) end
     end
-
-    bodyVelocity.Velocity = move.Unit * 100
+    if move.Magnitude > 0 then
+        bodyVelocity.Velocity = move.Unit * speed
+    else
+        bodyVelocity.Velocity = Vector3.new(0,0,0)
+    end
     bodyGyro.CFrame = camera.CFrame
 end)
 
--- ContextActionService для мобильных
-game:GetService("ContextActionService"):BindAction("FlyInput", function(name, state, input)
-    return Enum.ContextActionResult.Pass
-end, false, unpack({
-    Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D,
-    Enum.KeyCode.Space, Enum.KeyCode.LeftShift
-}))
-
--- UI элементы
 local InvisToggle, FlyToggle
+local function updateToggleButton(state) if InvisToggle then InvisToggle:Set(state) end end
+local function updateFlyButton(state) if FlyToggle then FlyToggle:Set(state) end end
 
-local function updateToggleButton(state)
-    if InvisToggle then InvisToggle:Set(state) end
-end
-
-local function updateFlyButton(state)
-    if FlyToggle then FlyToggle:Set(state) end
-end
-
--- Main Tab
 local ControlSection = MainTab:CreateSection("Controls")
-
 InvisToggle = MainTab:CreateToggle({
     Name = "Invisibility",
     CurrentValue = false,
     Flag = "InvisibilityToggle",
     Callback = function(Value)
-        if Value ~= invis_on then
-            toggleInvisibility()
-        end
+        if Value ~= invis_on then toggleInvisibility() end
     end,
 })
-
 FlyToggle = MainTab:CreateToggle({
     Name = "Fly",
     CurrentValue = false,
@@ -254,16 +191,10 @@ FlyToggle = MainTab:CreateToggle({
             toggleFly()
         elseif not invis_on then
             FlyToggle:Set(false)
-            Rayfield:Notify({
-                Title = "Error",
-                Content = "You must be invisible to use fly",
-                Duration = 2,
-                Image = 4483362458
-            })
+            Rayfield:Notify({Title = "Error", Content = "You must be invisible to use fly", Duration = 2, Image = 4483362458})
         end
     end,
 })
-
 MainTab:CreateButton({
     Name = "Reset Character",
     Callback = function()
@@ -274,22 +205,15 @@ MainTab:CreateButton({
             local chair = workspace:FindFirstChild('invischair')
             if chair then chair:Destroy() end
             character:BreakJoints()
-            Rayfield:Notify({
-                Title = "Character Reset",
-                Content = "Your character has been reset",
-                Duration = 2,
-                Image = 4483362458
-            })
+            Rayfield:Notify({Title = "Character Reset", Content = "Your character has been reset", Duration = 2, Image = 4483362458})
         end
     end,
 })
 
--- Settings Tab
 local SettingsSection = SettingsTab:CreateSection("Keybinds")
-
 local KeybindDropdown = SettingsTab:CreateDropdown({
     Name = "Invisibility Keybind",
-    Options = {"X", "Z", "C", "V", "B", "F", "G", "H", "J", "K", "L"},
+    Options = {"X","Z","C","V","B","F","G","H","J","K","L"},
     CurrentOption = {keybind},
     MultipleOptions = false,
     Flag = "KeybindDropdown",
@@ -299,64 +223,38 @@ local KeybindDropdown = SettingsTab:CreateDropdown({
         setupKeybind()
     end,
 })
-
 function setupKeybind()
     if connection then connection:Disconnect() end
-    connection = game:GetService("UserInputService").InputBegan:Connect(function(input, gp)
+    connection = game:GetService("UserInputService").InputBegan:Connect(function(input,gp)
         if gp then return end
-        if input.KeyCode == Enum.KeyCode[keybind] then
-            toggleInvisibility()
-        end
+        if input.KeyCode == Enum.KeyCode[keybind] then toggleInvisibility() end
     end)
 end
-
 local InfoSection = SettingsTab:CreateSection("Information")
-SettingsTab:CreateParagraph({
-    Title = "Unvisible Rework",
-    Content = "Use the invisibility toggle to become invisible. Fly can only be used while invisible. Use the keybind to quickly toggle invisibility."
-})
+SettingsTab:CreateParagraph({Title = "Unvisible Rework", Content = "Use the invisibility toggle to become invisible. Fly can only be used while invisible. Use the keybind to quickly toggle invisibility."})
 
--- Misc Tab - Прозрачность
 local MiscSection = MiscTab:CreateSection("Appearance")
-
 MiscTab:CreateSlider({
     Name = "Transparency Level",
-    Range = {0, 1},
+    Range = {0,1},
     Increment = 0.1,
     Suffix = "",
     CurrentValue = transparency_level,
     Flag = "TransparencySlider",
     Callback = function(Value)
         transparency_level = Value
-        if invis_on then
-            applyTransparency(Value)
-        end
+        if invis_on then applyTransparency(Value) end
     end,
 })
+MiscTab:CreateParagraph({Title = "Note", Content = "Transparency only applies when invisible."})
 
-MiscTab:CreateParagraph({
-    Title = "Note",
-    Content = "Transparency only applies when invisible."
-})
-
--- При респавне
-game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
+game.Players.LocalPlayer.CharacterAdded:Connect(function()
     invis_on = false
     fly_on = false
     updateToggleButton(false)
     updateFlyButton(false)
-    if mobileFlyGui then
-        mobileFlyGui:Destroy()
-        mobileFlyGui = nil
-    end
+    if mobileFlyGui then mobileFlyGui:Destroy() mobileFlyGui = nil end
 end)
 
--- Инициализация
 setupKeybind()
-
-Rayfield:Notify({
-    Title = "Unvisible Rework Loaded",
-    Content = "Press " .. keybind .. " to toggle invisibility" .. (isMobile and "\nFly controls appear on screen when active" or ""),
-    Duration = 6,
-    Image = 4483362458
-})
+Rayfield:Notify({Title = "Unvisible Rework Loaded", Content = "Press "..keybind.." to toggle invisibility"..(isMobile and "\nFly controls appear on screen when active" or ""), Duration = 6, Image = 4483362458})
