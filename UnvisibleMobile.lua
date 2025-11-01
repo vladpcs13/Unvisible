@@ -4,12 +4,12 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local GuiService = game:GetService("GuiService")
 
-print("Starting GhostScript...") -- Отладка: начало скрипта
+print("Starting GhostScript...")
 
 local player = Players.LocalPlayer
-print("Player found:", player.Name) -- Отладка: игрок найден
+print("Player found:", player.Name)
 
--- Ждем, пока персонаж и PlayerGui будут готовы
+
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart", 5)
 local playerGui = player:WaitForChild("PlayerGui", 5)
@@ -20,17 +20,17 @@ if not humanoidRootPart or not playerGui then
     return
 end
 
-print("Character and PlayerGui initialized") -- Отладка: персонаж и GUI готовы
+print("Character and PlayerGui initialized")
 
 local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
-print("Is mobile:", isMobile) -- Отладка: определение устройства
+print("Is mobile:", isMobile)
 
--- Создание GUI
+
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "GhostScriptGui"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = playerGui
-print("ScreenGui created and parented to PlayerGui") -- Отладка: GUI создан
+print("ScreenGui created and parented to PlayerGui")
 
 local mainFrame = Instance.new("Frame")
 local frameSize = isMobile and UDim2.new(0, 220, 0, 60) or UDim2.new(0, 420, 0, 100)
@@ -40,14 +40,14 @@ mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 mainFrame.BackgroundTransparency = 1
 mainFrame.ClipsDescendants = true
 mainFrame.Parent = screenGui
-print("MainFrame created") -- Отладка: основной фрейм создан
+print("MainFrame created")
 
 local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 local tweenSize = TweenService:Create(mainFrame, tweenInfo, {Size = frameSize})
 local tweenTransparency = TweenService:Create(mainFrame, tweenInfo, {BackgroundTransparency = 0.5})
 tweenSize:Play()
 tweenTransparency:Play()
-print("Tweens started") -- Отладка: анимации запущены
+print("Tweens started")
 
 local uiCorner = Instance.new("UICorner")
 uiCorner.CornerRadius = UDim.new(0, isMobile and 6 or 10)
@@ -70,7 +70,7 @@ textLabel.TextSize = isMobile and 12 or 18
 textLabel.Font = Enum.Font.SourceSansBold
 textLabel.TextScaled = isMobile
 textLabel.Parent = mainFrame
-print("TextLabel created") -- Отладка: текстовый лейбл создан
+print("TextLabel created")
 
 local buttonFrame = Instance.new("Frame")
 buttonFrame.Size = UDim2.new(1, isMobile and -8 or -16, 0, isMobile and 36 or 60)
@@ -84,7 +84,7 @@ uiListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 uiListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 uiListLayout.Padding = UDim.new(0, isMobile and 4 or 6)
 uiListLayout.Parent = buttonFrame
-print("ButtonFrame and UIListLayout created") -- Отладка: фрейм кнопок создан
+print("ButtonFrame and UIListLayout created")
 
 local function createButton(parent, size, bgColor, text, textSize, cornerRadius, strokeThickness)
     local button = Instance.new("TextButton")
@@ -111,8 +111,7 @@ local extraButton = createButton(buttonFrame, buttonSize, Color3.fromRGB(0, 200,
 local invisibleButton = createButton(buttonFrame, buttonSize, Color3.fromRGB(0, 170, 255), "Hide/Show", isMobile and 12 or 18, isMobile and 5 or 8, isMobile and 0.5 or 1)
 local revertButton = createButton(buttonFrame, buttonSize, Color3.fromRGB(255, 165, 0), "Revert", isMobile and 12 or 18, isMobile and 5 or 8, isMobile and 0.5 or 1)
 local flyButton = createButton(buttonFrame, buttonSize, Color3.fromRGB(128, 0, 128), "Fly Mode", isMobile and 12 or 18, isMobile and 5 or 8, isMobile and 0.5 or 1)
-print("Buttons created") -- Отладка: кнопки созданы
-
+print("Buttons created")
 local joystickOuter, joystickInner
 local joystickActive = false
 local joystickOrigin = nil
@@ -148,7 +147,7 @@ if isMobile then
     local joystickInnerCorner = Instance.new("UICorner")
     joystickInnerCorner.CornerRadius = UDim.new(0.5, 0)
     joystickInnerCorner.Parent = joystickInner
-    print("Joystick created for mobile") -- Отладка: джойстик создан
+    print("Joystick created for mobile")
 end
 
 local function createPlatform(position)
@@ -160,7 +159,7 @@ local function createPlatform(position)
     platform.Anchored = true
     platform.BrickColor = BrickColor.new("Really black")
     platform.Parent = workspace
-    print("Platform created at", position) -- Отладка: платформа создана
+    print("Platform created at", position)
 end
 
 local function createGhostPart(position)
@@ -189,7 +188,7 @@ local function createGhostPart(position)
 
     camera.CameraSubject = ghostPart
     camera.CameraType = Enum.CameraType.Follow
-    print("GhostPart created at", position.Position) -- Отладка: призрак создан
+    print("GhostPart created at", position.Position)
 end
 
 local function updateGhostPartMovement()
@@ -227,7 +226,7 @@ local function makeGhostPartJump(input, gameProcessed)
         bodyVelocity.Parent = ghostPart
         task.wait(0.2)
         bodyVelocity:Destroy()
-        print("GhostPart jumped") -- Отладка: прыжок призрака
+        print("GhostPart jumped")
     end
 end
 
@@ -247,7 +246,7 @@ local function revertToOriginalPosition()
     if platform then platform:Destroy() platform = nil end
     isGhostMode = false
     isFlyMode = false
-    print("Reverted to original position") -- Отладка: возврат к исходной позиции
+    print("Reverted to original position")
 end
 
 local function teleportToLastDeath()
@@ -257,7 +256,7 @@ local function teleportToLastDeath()
         if isGhostMode then
             revertToOriginalPosition()
         end
-        print("Teleported to last death position") -- Отладка: телепортация к последней позиции смерти
+        print("Teleported to last death position")
     else
         warn("No death position recorded")
         game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -284,7 +283,7 @@ local function teleportAndGhost()
         if platform then platform:Destroy() platform = nil end
         isGhostMode = false
         isFlyMode = false
-        print("Ghost mode deactivated") -- Отладка: режим призрака выключен
+        print("Ghost mode deactivated")
     else
         lastPosition = humanoidRootPart.CFrame
         local teleportPosition = Vector3.new(math.random(-1000, 1000), 100, math.random(-1000, 1000))
@@ -301,7 +300,7 @@ local function teleportAndGhost()
             end
         end
         isGhostMode = true
-        print("Ghost mode activated") -- Отладка: режим призрака включен
+        print("Ghost mode activated")
     end
 end
 
@@ -315,7 +314,7 @@ local function toggleFlyMode()
             bodyVelocity.MaxForce = isFlyMode and Vector3.new(math.huge, math.huge, math.huge) or Vector3.new(math.huge, 0, math.huge)
         end
     end
-    print("Fly mode:", isFlyMode and "Enabled" or "Disabled") -- Отладка: режим полета
+    print("Fly mode:", isFlyMode and "Enabled" or "Disabled")
 end
 
 local function loadScript(url)
@@ -325,7 +324,7 @@ local function loadScript(url)
     if not success then
         warn("Failed to load script:", result)
     end
-    print("Script loaded from", url, "Success:", success) -- Отладка: загрузка скрипта
+    print("Script loaded from", url, "Success:", success)
     return success, result
 end
 
@@ -398,7 +397,7 @@ local function createExtraMenu()
     closeButton.MouseButton1Click:Connect(function()
         extraFrame:Destroy()
     end)
-    print("Extra menu created") -- Отладка: меню дополнительных скриптов создано
+    print("Extra menu created")
 end
 
 local function shutdownScript()
@@ -422,7 +421,7 @@ local function shutdownScript()
         connection:Disconnect()
     end
     connections = {}
-    print("Script shutdown") -- Отладка: скрипт выключен
+    print("Script shutdown")
     script:Destroy()
 end
 
@@ -431,7 +430,7 @@ local function startDragging(input)
         isDragging = true
         dragStart = input.Position
         startPos = mainFrame.Position
-        print("Dragging started") -- Отладка: начало перетаскивания
+        print("Dragging started")
     end
 end
 
@@ -451,7 +450,7 @@ end
 
 local function stopDragging()
     isDragging = false
-    print("Dragging stopped") -- Отладка: конец перетаскивания
+    print("Dragging stopped")
 end
 
 local function startJoystick(input)
@@ -459,7 +458,7 @@ local function startJoystick(input)
         joystickActive = true
         joystickOrigin = input.Position
         joystickInner.Position = UDim2.new(0.5, -20, 0.5, -20)
-        print("Joystick started") -- Отладка: джойстик активирован
+        print("Joystick started")
     end
 end
 
@@ -481,12 +480,12 @@ local function stopJoystick()
         joystickActive = false
         joystickInput = Vector2.new(0, 0)
         joystickInner.Position = UDim2.new(0.5, -20, 0.5, -20)
-        print("Joystick stopped") -- Отладка: джойстик деактивирован
+        print("Joystick stopped")
     end
 end
 
 local function connectEvents()
-    print("Connecting events...") -- Отладка: подключение событий
+    print("Connecting events...")
     table.insert(connections, UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
         if input.KeyCode == Enum.KeyCode.X then
@@ -517,13 +516,13 @@ local function connectEvents()
                     part.Transparency = 0
                 end
             end
-            print("Character respawned, resetting ghost mode") -- Отладка: респавн персонажа
+            print("Character respawned, resetting ghost mode")
         end
     end))
 
     table.insert(connections, character.Humanoid.Died:Connect(function()
         lastDeathPosition = humanoidRootPart.Position
-        print("Death position recorded at", lastDeathPosition) -- Отладка: позиция смерти сохранена
+        print("Death position recorded at", lastDeathPosition)
     end))
 
     table.insert(connections, closeButton.MouseButton1Click:Connect(function()
@@ -573,7 +572,7 @@ local function connectEvents()
             end
         end))
     end
-    print("Events connected") -- Отладка: события подключены
+    print("Events connected")
 end
 
 local success, errorMsg = pcall(connectEvents)
@@ -585,5 +584,5 @@ if not success then
         Duration = 5
     })
 else
-    print("Script initialized successfully") -- Отладка: скрипт успешно инициализирован
+    print("Script initialized successfully")
 end
